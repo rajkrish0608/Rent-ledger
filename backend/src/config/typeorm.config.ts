@@ -1,5 +1,7 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
+import { User } from '../users/entities/user.entity';
+import { RefreshToken } from '../auth/entities/refresh-token.entity';
 
 dotenv.config();
 
@@ -10,7 +12,7 @@ export const typeOrmConfig: DataSourceOptions = {
     username: process.env.DB_USERNAME || 'rentledger_admin',
     password: process.env.DB_PASSWORD || 'dev_password',
     database: process.env.DB_NAME || 'rentledger_dev',
-    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    entities: [User, RefreshToken],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
     synchronize: false, // NEVER use in production
     logging: process.env.NODE_ENV === 'development',
