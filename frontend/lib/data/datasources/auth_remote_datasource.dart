@@ -7,7 +7,7 @@ class AuthRemoteDataSource {
 
   AuthRemoteDataSource(this.dio);
 
-  Future\u003cAuthResponse\u003e register({
+  Future<AuthResponse> register({
     required String email,
     required String password,
     required String name,
@@ -28,7 +28,7 @@ class AuthRemoteDataSource {
     return AuthResponse.fromJson(response.data);
   }
 
-  Future\u003cAuthResponse\u003e login({
+  Future<AuthResponse> login({
     required String email,
     required String password,
   }) async {
@@ -43,7 +43,7 @@ class AuthRemoteDataSource {
     return AuthResponse.fromJson(response.data);
   }
 
-  Future\u003cvoid\u003e logout(String refreshToken) async {
+  Future<void> logout(String refreshToken) async {
     await dio.post(
       ApiConstants.logout,
       data: {'refreshToken': refreshToken},

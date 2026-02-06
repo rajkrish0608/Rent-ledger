@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/theme/app_theme.dart';
-import '../providers/auth_provider.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../providers/auth_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
-  const RegisterScreen({super.key});
+  RegisterScreen({super.key});
 
   @override
-  ConsumerState\u003cRegisterScreen\u003e createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends ConsumerState\u003cRegisterScreen\u003e {
-  final _formKey = GlobalKey\u003cFormState\u003e();
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
@@ -29,7 +29,7 @@ class _RegisterScreenState extends ConsumerState\u003cRegisterScreen\u003e {
     super.dispose();
   }
 
-  Future\u003cvoid\u003e _handleRegister() async {
+  Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
@@ -164,7 +164,7 @@ class _RegisterScreenState extends ConsumerState\u003cRegisterScreen\u003e {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation\u003cColor\u003e(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : const Text('Register'),

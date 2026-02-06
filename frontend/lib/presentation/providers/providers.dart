@@ -7,7 +7,7 @@ import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 
 // Dio provider
-final dioProvider = Provider\u003cDio\u003e((ref) {
+final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: ApiConstants.baseUrl,
@@ -23,17 +23,17 @@ final dioProvider = Provider\u003cDio\u003e((ref) {
 });
 
 // Secure storage provider
-final secureStorageProvider = Provider\u003cFlutterSecureStorage\u003e((ref) {
+final secureStorageProvider = Provider<FlutterSecureStorage>((ref) {
   return const FlutterSecureStorage();
 });
 
 // Auth remote data source provider
-final authRemoteDataSourceProvider = Provider\u003cAuthRemoteDataSource\u003e((ref) {
+final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
   return AuthRemoteDataSource(ref.watch(dioProvider));
 });
 
 // Auth repository provider
-final authRepositoryProvider = Provider\u003cAuthRepository\u003e((ref) {
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     remoteDataSource: ref.watch(authRemoteDataSourceProvider),
     secureStorage: ref.watch(secureStorageProvider),

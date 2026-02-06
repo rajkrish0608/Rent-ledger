@@ -11,11 +11,11 @@ class AuthResponse {
     required this.refreshToken,
   });
 
-  factory AuthResponse.fromJson(Map\u003cString, dynamic\u003e json) {
+  factory AuthResponse.fromJson(Map<String, dynamic> map) {
     return AuthResponse(
-      user: UserModel.fromJson(json['user']),
-      accessToken: json['accessToken'],
-      refreshToken: json['refreshToken'],
+      user: UserModel.fromJson(map['user']),
+      accessToken: map['accessToken'],
+      refreshToken: map['refreshToken'],
     );
   }
 }

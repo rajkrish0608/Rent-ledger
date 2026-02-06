@@ -49,7 +49,7 @@ class RentLedgerApp extends ConsumerWidget {
         ),
         GoRoute(
           path: '/register',
-          builder: (context, state) => const RegisterScreen(),
+          builder: (context, state) => RegisterScreen(),
         ),
         GoRoute(
           path: '/home',

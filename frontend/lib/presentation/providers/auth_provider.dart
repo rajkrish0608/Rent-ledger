@@ -2,14 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/user.dart';
 import 'providers.dart';
 
-class AuthNotifier extends StateNotifier\u003cAsyncValue\u003cUser?\u003e\u003e {
+class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
   final Ref ref;
 
   AuthNotifier(this.ref) : super(const AsyncValue.loading()) {
     _loadUser();
   }
 
-  Future\u003cvoid\u003e _loadUser() async {
+  Future<void> _loadUser() async {
     try {
       final user = await ref.read(authRepositoryProvider).getCurrentUser();
       state = AsyncValue.data(user);
@@ -18,7 +18,7 @@ class AuthNotifier extends StateNotifier\u003cAsyncValue\u003cUser?\u003e\u003e 
     }
   }
 
-  Future\u003cvoid\u003e register({
+  Future<void> register({
     required String email,
     required String password,
     required String name,
@@ -40,7 +40,7 @@ class AuthNotifier extends StateNotifier\u003cAsyncValue\u003cUser?\u003e\u003e 
     }
   }
 
-  Future\u003cvoid\u003e login({
+  Future<void> login({
     required String email,
     required String password,
   }) async {
@@ -56,12 +56,12 @@ class AuthNotifier extends StateNotifier\u003cAsyncValue\u003cUser?\u003e\u003e 
     }
   }
 
-  Future\u003cvoid\u003e logout() async {
+  Future<void> logout() async {
     await ref.read(authRepositoryProvider).logout();
     state = const AsyncValue.data(null);
   }
 }
 
-final authProvider = StateNotifierProvider\u003cAuthNotifier, AsyncValue\u003cUser?\u003e\u003e((ref) {
+final authProvider = StateNotifierProvider<AuthNotifier, AsyncValue<User?>>((ref) {
   return AuthNotifier(ref);
 });

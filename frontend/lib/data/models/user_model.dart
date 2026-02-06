@@ -8,16 +8,16 @@ class UserModel extends User {
     required super.role,
   });
 
-  factory UserModel.fromJson(Map\u003cString, dynamic\u003e json) {
+  factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
-      id: json['id'],
-      email: json['email'],
-      name: json['name'],
-      role: json['role'],
+      id: map['id'],
+      email: map['email'],
+      name: map['name'],
+      role: map['role'],
     );
   }
 
-  Map\u003cString, dynamic\u003e toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'email': email,

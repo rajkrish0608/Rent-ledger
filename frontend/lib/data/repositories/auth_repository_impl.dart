@@ -15,7 +15,7 @@ class AuthRepositoryImpl implements AuthRepository {
   });
 
   @override
-  Future\u003cUser\u003e register({
+  Future<User> register({
     required String email,
     required String password,
     required String name,
@@ -39,7 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future\u003cUser\u003e login({
+  Future<User> login({
     required String email,
     required String password,
   }) async {
@@ -57,7 +57,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future\u003cvoid\u003e logout() async {
+  Future<void> logout() async {
     final refreshToken = await secureStorage.read(key: 'refresh_token');
     if (refreshToken != null) {
       await remoteDataSource.logout(refreshToken);
@@ -67,7 +67,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future\u003cUser?\u003e getCurrentUser() async {
+  Future<User?> getCurrentUser() async {
     final userDataString = await secureStorage.read(key: 'user_data');
     if (userDataString == null) return null;
 
