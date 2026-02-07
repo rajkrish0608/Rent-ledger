@@ -1,18 +1,14 @@
 node_modules
 dist
+npm-debug.log
+backend.log
+uploads
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
 .env
-.env.local
-*.log
+.dev.env
+*.md
+tests
 coverage
-.DS_Store
-.idea
-.vscode
-*.swp
-*.swo
-*~
-
-# Docker
-.dockerignore
-
-# OS
-Thumbs.db
