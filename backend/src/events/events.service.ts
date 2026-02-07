@@ -152,4 +152,38 @@ export class EventsService {
             totalPages: Math.ceil(total / limit),
         };
     }
+
+    /**
+     * Search events in a rental timeline
+     */
+    async searchTimeline(rentalId: string, userId: string, query: string): Promise<EventResponseDto[]> {
+        // Verify access
+        await this.rentalsService.verifyAccess(rentalId, userId);
+
+        const events = await this.eventsRepo
+            .createQueryBuilder('event')
+            .leftJoinAndSelect('event.media', 'media')
+            .leftJoinAndSelect('event.actor', 'actor')
+            .where('event.rental_id = :rentalId', { rentalId })
+            .andWhere(
+                `(media.metadata->>'ocr_text' ILIKE :query OR event.event_data::text ILIKE :query)`,
+                { query: `%${query}%` }
+            )
+            .orderBy('event.timestamp', 'DESC')
+            .getMany();
+
+        return events.map((event) => ({
+            id: event.id,
+            rental_id: rentalId,
+            event_type: event.event_type,
+            event_data: event.event_data,
+            actor_id: event.actor.id,
+            actor_name: event.actor.name,
+            actor_type: event.actor_type,
+            timestamp: event.timestamp.toISOString(),
+            current_event_hash: event.current_event_hash,
+            previous_event_hash: event.previous_event_hash,
+            created_at: event.created_at.toISOString(),
+        }));
+    }
 }

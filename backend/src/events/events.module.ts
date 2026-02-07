@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
@@ -11,7 +11,7 @@ import { ReputationModule } from '../reputation/reputation.module';
     imports: [
         TypeOrmModule.forFeature([RentalEvent]),
         IntegrityModule,
-        RentalsModule,
+        forwardRef(() => RentalsModule),
         ReputationModule,
     ],
     controllers: [EventsController],

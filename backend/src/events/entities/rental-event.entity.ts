@@ -9,6 +9,8 @@ import {
 } from 'typeorm';
 import { Rental } from '../../rentals/entities/rental.entity';
 import { User } from '../../users/entities/user.entity';
+import { MediaFile } from '../../media/entities/media-file.entity';
+import { OneToMany } from 'typeorm';
 
 @Entity('rental_events')
 export class RentalEvent {
@@ -40,6 +42,9 @@ export class RentalEvent {
 
     @Column()
     current_event_hash: string;
+
+    @OneToMany(() => MediaFile, (media) => media.event)
+    media: MediaFile[];
 
     @CreateDateColumn()
     created_at: Date;

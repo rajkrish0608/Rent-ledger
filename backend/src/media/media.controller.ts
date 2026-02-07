@@ -1,9 +1,13 @@
-import { Controller, Post, Get, Put, Body, Query, Param, UseGuards, Request, Req, StreamableFile, Res, NotFoundException } from '@nestjs/common';
+import { Controller, Post, Get, Put, Body, Query, Param, UseGuards, Request, Req, StreamableFile, Res, NotFoundException, Inject, forwardRef } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { MediaService } from './media.service';
 import { Request as ExpressRequest, Response } from 'express';
 import { createReadStream } from 'fs';
 import { join } from 'path';
+import { CreateMediaFileDto } from './dto/create-media-file.dto';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { User } from '../users/entities/user.entity';
+import { OcrService } from '../ocr/ocr.service';
 
 /**
  * Controller for handling media uploads.
@@ -11,7 +15,11 @@ import { join } from 'path';
  */
 @Controller('media')
 export class MediaController {
-    constructor(private readonly mediaService: MediaService) { }
+    constructor(
+        private readonly mediaService: MediaService,
+        @Inject(forwardRef(() => OcrService))
+        private readonly ocrService: OcrService,
+    ) { }
 
     @UseGuards(JwtAuthGuard)
     @Post('upload-url')
@@ -27,6 +35,25 @@ export class MediaController {
             uploadUrl: url,
             key: key,
         };
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('confirm')
+    async confirm(@Body() dto: CreateMediaFileDto, @CurrentUser() user: User) {
+        const media = await this.mediaService.createMediaFile(dto, user);
+
+        // Trigger OCR processing (fire and forget or await depending on requirements)
+        // Awaiting for now to ensure debugging
+        try {
+            if (media.file_type === 'IMAGE' || media.file_type === 'PDF' || media.mime_type.startsWith('image/')) {
+                await this.ocrService.processDocument(media.id);
+            }
+        } catch (e) {
+            console.error('OCR processing failed', e);
+            // Don't fail the request, just log error
+        }
+
+        return media;
     }
 
     @UseGuards(JwtAuthGuard)
