@@ -22,4 +22,8 @@ class ApiConstants {
   // Export Endpoints
   static String createExport(String id) => '/exports/rental/$id';
   static String exportStatus(String id) => '/exports/$id';
+
+  // Event Endpoints
+  static const String events = '/events';
+  static String rentalEvents(String id) => '/events/rental/$id';
 }

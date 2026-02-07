@@ -8,6 +8,7 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../data/models/dashboard/dashboard_stats.dart';
 import '../../data/repositories/dashboard/dashboard_repository.dart';
 import '../../data/repositories/society/society_repository.dart';
+import '../../domain/entities/rental.dart';
 
 // Dio provider with auth interceptor
 final dioProvider = Provider<Dio>((ref) {

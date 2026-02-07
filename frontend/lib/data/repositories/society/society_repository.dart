@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import '../../core/error/failures.dart';
+import '../../../core/error/failures.dart';
 import '../../../domain/entities/rental.dart';
-import '../models/rental_model.dart';
+import '../../models/rental_model.dart';
 
 abstract class SocietyRepository {
   Future<List<Rental>> getSocietyRentals();
@@ -17,7 +17,7 @@ class SocietyRepositoryImpl implements SocietyRepository {
     try {
       final response = await _dio.get('/society/rentals');
       final List<dynamic> data = response.data;
-      return data.map((json) => RentalModel.fromJson(json)).toList();
+      return data.map<Rental>((json) => RentalModel.fromJson(json as Map<String, dynamic>).toEntity()).toList();
     } on DioException catch (e) {
       throw ServerFailure(
         e.response?.data['message'] ?? 'Failed to fetch society rentals',

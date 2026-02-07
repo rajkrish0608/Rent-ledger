@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import '../../core/error/failures.dart';
-import '../models/dashboard/dashboard_stats.dart';
+import '../../../core/error/failures.dart';
+import '../../models/dashboard/dashboard_stats.dart';
 
 abstract class DashboardRepository {
   Future<DashboardStats> getBrokerStats();
