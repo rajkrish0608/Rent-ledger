@@ -3,6 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
+import { IntegrityModule } from './integrity/integrity.module';
+import { RentalsModule } from './rentals/rentals.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
     imports: [
@@ -14,6 +17,9 @@ import { AuthModule } from './auth/auth.module';
             useFactory: () => typeOrmConfig,
         }),
         AuthModule,
+        IntegrityModule,
+        RentalsModule,
+        EventsModule,
     ],
     controllers: [],
     providers: [],
