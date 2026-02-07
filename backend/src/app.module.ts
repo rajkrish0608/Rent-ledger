@@ -12,6 +12,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { OcrModule } from './ocr/ocr.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { HealthModule } from './health/health.module';
+import { UsersModule } from './users/users.module';
+import { LegalModule } from './legal/legal.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigService } from '@nestjs/config';
 
@@ -38,6 +41,12 @@ import { ConfigService } from '@nestjs/config';
         OcrModule,
         NotificationsModule,
         HealthModule,
+        UsersModule,
+        LegalModule,
+        ThrottlerModule.forRoot([{
+            ttl: 60000,
+            limit: 10,
+        }]),
         BullModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (config: ConfigService) => ({
