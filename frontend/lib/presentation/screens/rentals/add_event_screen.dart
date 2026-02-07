@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../domain/entities/rental_event.dart';
 import '../../providers/rental_providers.dart';
-
+import '../../providers/media_provider.dart';
 class AddEventScreen extends ConsumerStatefulWidget {
   final String rentalId;
 
@@ -24,6 +26,11 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
   final _descriptionController = TextEditingController();
   final _notesController = TextEditingController();
   final _amountController = TextEditingController();
+  
+  final ImagePicker _picker = ImagePicker();
+  final List<String> _attachmentKeys = [];
+  final List<File> _localFiles = []; // For preview
+  bool _isUploading = false;
 
   @override
   void dispose() {
@@ -203,6 +210,106 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+              // Evidence Card
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Evidence',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          if (_isUploading)
+                            const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      if (_localFiles.isNotEmpty) ...[
+                        SizedBox(
+                          height: 100,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _localFiles.length,
+                            separatorBuilder: (context, index) => const SizedBox(width: 8),
+                            itemBuilder: (context, index) {
+                              return Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.file(
+                                      _localFiles[index],
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 4,
+                                    right: 4,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _localFiles.removeAt(index);
+                                          _attachmentKeys.removeAt(index);
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.black54,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.close,
+                                          size: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _isUploading ? null : () => _pickImage(ImageSource.camera),
+                              icon: const Icon(Icons.camera_alt),
+                              label: const Text('Camera'),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _isUploading ? null : () => _pickImage(ImageSource.gallery),
+                              icon: const Icon(Icons.photo_library),
+                              label: const Text('Gallery'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -226,9 +333,10 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+              const SizedBox(height: 24),
               creationState.when(
                 data: (_) => ElevatedButton(
-                  onPressed: _submitEvent,
+                  onPressed: _isUploading ? null : _submitEvent,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
@@ -295,6 +403,10 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     final eventData = <String, dynamic>{
       'description': _descriptionController.text.trim(),
     };
+    
+    if (_attachmentKeys.isNotEmpty) {
+      eventData['attachments'] = _attachmentKeys;
+    }
 
     if (_notesController.text.trim().isNotEmpty) {
       eventData['notes'] = _notesController.text.trim();
@@ -394,6 +506,54 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         return Icons.report_problem;
       case EventType.inspection:
         return Icons.search;
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final pickedFile = await _picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _isUploading = true;
+        });
+
+        final file = File(pickedFile.path);
+        final key = await ref.read(mediaUploadControllerProvider.notifier).uploadFile(file);
+
+        if (key != null) {
+          if (mounted) {
+            setState(() {
+              _localFiles.add(file);
+              _attachmentKeys.add(key);
+              _isUploading = false;
+            });
+          }
+        } else {
+          if (mounted) {
+            setState(() {
+              _isUploading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to upload image')),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isUploading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking image: $e')),
+        );
+      }
     }
   }
 }

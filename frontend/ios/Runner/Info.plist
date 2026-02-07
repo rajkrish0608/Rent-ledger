@@ -45,6 +45,12 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>RentLedger needs camera access to capture rental evidence.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>RentLedger needs photo library access to upload evidence.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>RentLedger needs microphone access for video evidence.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

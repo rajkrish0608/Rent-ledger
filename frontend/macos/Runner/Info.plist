@@ -24,6 +24,10 @@
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>$(PRODUCT_COPYRIGHT)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>RentLedger needs camera access to capture rental evidence.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>RentLedger needs photo library access to upload evidence.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

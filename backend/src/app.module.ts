@@ -7,6 +7,7 @@ import { IntegrityModule } from './integrity/integrity.module';
 import { RentalsModule } from './rentals/rentals.module';
 import { EventsModule } from './events/events.module';
 import { ExportsModule } from './exports/exports.module';
+import { MediaModule } from './media/media.module';
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { ExportsModule } from './exports/exports.module';
         RentalsModule,
         EventsModule,
         ExportsModule,
+        MediaModule,
     ],
     controllers: [],
     providers: [],

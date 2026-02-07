@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../domain/entities/rental.dart';
 import '../../../domain/entities/rental_event.dart';
 import '../../providers/rental_providers.dart';
+import '../../providers/media_provider.dart';
 
 class TimelineScreen extends ConsumerWidget {
   final String rentalId;
@@ -443,7 +444,7 @@ class _EventCard extends StatelessWidget {
                       const SizedBox(height: 12),
                       const Divider(),
                       const SizedBox(height: 8),
-                      ...event.eventData.entries.map((entry) {
+                      ...event.eventData.entries.where((e) => e.key != 'attachments').map((entry) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Row(
@@ -466,6 +467,21 @@ class _EventCard extends StatelessWidget {
                           ),
                         );
                       }).toList(),
+                      if (event.eventData['attachments'] is List && (event.eventData['attachments'] as List).isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: 80,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: (event.eventData['attachments'] as List).length,
+                            separatorBuilder: (_, __) => const SizedBox(width: 8),
+                            itemBuilder: (context, index) {
+                              final key = (event.eventData['attachments'] as List)[index];
+                              return EvidenceThumbnail(mediaKey: key);
+                            },
+                          ),
+                        ),
+                      ],
                     ],
                     const SizedBox(height: 8),
                     Row(
@@ -518,5 +534,54 @@ class _EventCard extends StatelessWidget {
     if (type.contains('COMPLAINT')) return Icons.report_problem;
     if (type.contains('INSPECTION')) return Icons.search;
     return Icons.event;
+  }
+}
+
+class EvidenceThumbnail extends ConsumerWidget {
+  final String mediaKey;
+  const EvidenceThumbnail({required this.mediaKey, Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final urlAsync = ref.watch(mediaDownloadUrlProvider(mediaKey));
+    
+    return urlAsync.when(
+      data: (urlString) {
+        // Simple logic: trust backend URL
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.network(
+            urlString,
+            width: 80,
+            height: 80,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              width: 80, 
+              height: 80, 
+              color: Colors.grey[200],
+              child: const Icon(Icons.broken_image, size: 20, color: Colors.grey),
+            ),
+          ),
+        );
+      },
+      loading: () => Container(
+        width: 80, 
+        height: 80, 
+        color: Colors.grey[200], 
+        child: const Center(
+           child: SizedBox(
+             width: 20, 
+             height: 20, 
+             child: CircularProgressIndicator(strokeWidth: 2),
+           ),
+        ),
+      ),
+      error: (_, __) => Container(
+        width: 80, 
+        height: 80, 
+        color: Colors.grey[200], 
+        child: const Icon(Icons.error, size: 20, color: Colors.grey),
+      ),
+    );
   }
 }
