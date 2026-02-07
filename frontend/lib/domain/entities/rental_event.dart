@@ -35,7 +35,8 @@ enum EventType {
   repairCompleted('REPAIR_COMPLETED', 'Repair Completed'),
   noticeIssued('NOTICE_ISSUED', 'Notice Issued'),
   complaint('COMPLAINT', 'Complaint'),
-  inspection('INSPECTION', 'Inspection');
+  inspection('INSPECTION', 'Inspection'),
+  disputeFlagged('DISPUTE_FLAGGED', 'Dispute Flagged');
 
   final String value;
   final String displayName;

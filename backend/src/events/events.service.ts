@@ -6,6 +6,7 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { EventResponseDto } from './dto/event-response.dto';
 import { IntegrityService } from '../integrity/integrity.service';
 import { RentalsService } from '../rentals/rentals.service';
+import { ReputationService } from '../reputation/reputation.service';
 
 @Injectable()
 export class EventsService {
@@ -14,6 +15,7 @@ export class EventsService {
         private eventsRepo: Repository<RentalEvent>,
         private integrityService: IntegrityService,
         private rentalsService: RentalsService,
+        private reputationService: ReputationService,
     ) { }
 
     /**
@@ -55,6 +57,27 @@ export class EventsService {
         });
 
         const savedEvent = await this.eventsRepo.save(event);
+
+        // Capture reputation signal
+        try {
+            if (savedEvent.event_type === 'RENT_PAID') {
+                await this.reputationService.captureSignal(
+                    actorId,
+                    createDto.rental_id,
+                    'RENT_PAID_ON_TIME',
+                    { event_id: savedEvent.id, amount: createDto.event_data['amount'] }
+                );
+            } else if (savedEvent.event_type === 'DISPUTE_FLAGGED') {
+                await this.reputationService.captureSignal(
+                    actorId,
+                    createDto.rental_id,
+                    'DISPUTE_RAISED',
+                    { event_id: savedEvent.id }
+                );
+            }
+        } catch (e) {
+            console.error('Failed to capture reputation signal', e);
+        }
 
         return this.getEventById(savedEvent.id, actorId);
     }

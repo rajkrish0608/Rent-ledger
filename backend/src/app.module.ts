@@ -8,6 +8,7 @@ import { RentalsModule } from './rentals/rentals.module';
 import { EventsModule } from './events/events.module';
 import { ExportsModule } from './exports/exports.module';
 import { MediaModule } from './media/media.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
     imports: [
@@ -18,7 +19,7 @@ import { MediaModule } from './media/media.module';
         TypeOrmModule.forRootAsync({
             useFactory: () => ({
                 ...typeOrmConfig,
-                entities: [], // Webpack compatibility: rely on autoLoadEntities
+                entities: [],
                 autoLoadEntities: true,
             }),
         }),
@@ -28,6 +29,7 @@ import { MediaModule } from './media/media.module';
         EventsModule,
         ExportsModule,
         MediaModule,
+        DashboardModule,
     ],
     controllers: [],
     providers: [],

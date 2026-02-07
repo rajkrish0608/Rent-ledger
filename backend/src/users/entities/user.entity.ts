@@ -4,7 +4,10 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
+    ManyToOne,
+    JoinColumn,
 } from 'typeorm';
+import { Society } from '../../society/entities/society.entity';
 
 @Entity('users')
 export class User {
@@ -34,4 +37,8 @@ export class User {
 
     @Column({ type: 'timestamp', nullable: true })
     last_login: Date;
+
+    @ManyToOne(() => Society, (society) => society.admins, { nullable: true })
+    @JoinColumn({ name: 'society_id' })
+    society: Society;
 }

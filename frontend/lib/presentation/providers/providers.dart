@@ -5,6 +5,9 @@ import '../../core/constants/app_constants.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../data/models/dashboard/dashboard_stats.dart';
+import '../../data/repositories/dashboard/dashboard_repository.dart';
+import '../../data/repositories/society/society_repository.dart';
 
 // Dio provider with auth interceptor
 final dioProvider = Provider<Dio>((ref) {
@@ -83,4 +86,26 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
     remoteDataSource: ref.watch(authRemoteDataSourceProvider),
     secureStorage: ref.watch(secureStorageProvider),
   );
+});
+
+// Dashboard Repository Provider
+final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {
+  return DashboardRepositoryImpl(ref.watch(dioProvider));
+});
+
+// Broker Stats Provider
+final brokerStatsProvider = FutureProvider<DashboardStats>((ref) async {
+  final repository = ref.watch(dashboardRepositoryProvider);
+  return repository.getBrokerStats();
+});
+
+// Society Repository Provider
+final societyRepositoryProvider = Provider<SocietyRepository>((ref) {
+  return SocietyRepositoryImpl(ref.watch(dioProvider));
+});
+
+// Society Rentals Provider
+final societyRentalsProvider = FutureProvider<List<Rental>>((ref) async {
+  final repository = ref.watch(societyRepositoryProvider);
+  return repository.getSocietyRentals();
 });
