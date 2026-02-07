@@ -8,6 +8,8 @@ import { CreateMediaFileDto } from './dto/create-media-file.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { OcrService } from '../ocr/ocr.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 /**
  * Controller for handling media uploads.
@@ -19,6 +21,8 @@ export class MediaController {
         private readonly mediaService: MediaService,
         @Inject(forwardRef(() => OcrService))
         private readonly ocrService: OcrService,
+        @InjectQueue('ocr-processing')
+        private readonly ocrQueue: Queue,
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -46,7 +50,10 @@ export class MediaController {
         // Awaiting for now to ensure debugging
         try {
             if (media.file_type === 'IMAGE' || media.file_type === 'PDF' || media.mime_type.startsWith('image/')) {
-                await this.ocrService.processDocument(media.id);
+                // Queue OCR processing in background
+                await this.ocrQueue.add('process-ocr', {
+                    mediaId: media.id,
+                });
             }
         } catch (e) {
             console.error('OCR processing failed', e);

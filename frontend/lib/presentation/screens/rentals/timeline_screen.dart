@@ -7,7 +7,7 @@ import '../../../domain/entities/rental_event.dart';
 import '../../providers/rental_providers.dart';
 import '../../providers/media_provider.dart';
 
-class TimelineScreen extends ConsumerWidget {
+class TimelineScreen extends ConsumerStatefulWidget {
   final String rentalId;
 
   const TimelineScreen({
@@ -16,72 +16,142 @@ class TimelineScreen extends ConsumerWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final rentalAsync = ref.watch(rentalProvider(rentalId));
-    final eventsAsync = ref.watch(rentalEventsProvider(rentalId));
+  ConsumerState<TimelineScreen> createState() => _TimelineScreenState();
+}
+
+class _TimelineScreenState extends ConsumerState<TimelineScreen> {
+  late TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final rentalAsync = ref.watch(rentalProvider(widget.rentalId));
+    final eventsAsync = ref.watch(timelineSearchResultProvider(widget.rentalId));
+    final isSearching = ref.watch(timelineIsSearchingProvider(widget.rentalId));
 
     return Scaffold(
       body: rentalAsync.when(
         data: (rental) => CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 200,
+              expandedHeight: isSearching ? 120 : 200,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  rental.propertyAddress,
-                  style: const TextStyle(fontSize: 16),
-                ),
-                background: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColor.withOpacity(0.7),
-                      ],
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 80, 16, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if (rental.propertyUnit != null)
-                          Text(
-                            'Unit: ${rental.propertyUnit}',
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                          ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white24,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            rental.status.displayName,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                            ),
+                title: isSearching
+                    ? null
+                    : Text(
+                        rental.propertyAddress,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                background: isSearching
+                    ? null
+                    : Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).primaryColor.withOpacity(0.7),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 80, 16, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              if (rental.propertyUnit != null)
+                                Text(
+                                  'Unit: ${rental.propertyUnit}',
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white24,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  rental.status.displayName,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
               ),
+              bottom: isSearching
+                  ? PreferredSize(
+                      preferredSize: const Size.fromHeight(60),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: TextField(
+                          controller: _searchController,
+                          autofocus: true,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Search timeline (e.g. rent, notice, content)...',
+                            hintStyle: const TextStyle(color: Colors.white70),
+                            prefixIcon: const Icon(Icons.search, color: Colors.white),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.clear, color: Colors.white),
+                              onPressed: () {
+                                _searchController.clear();
+                                ref.read(timelineSearchQueryProvider(widget.rentalId).notifier).state = '';
+                              },
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white24,
+                          ),
+                          onChanged: (value) {
+                            ref.read(timelineSearchQueryProvider(widget.rentalId).notifier).state = value;
+                          },
+                        ),
+                      ),
+                    )
+                  : null,
               actions: [
+                IconButton(
+                  icon: Icon(isSearching ? Icons.close : Icons.search),
+                  onPressed: () {
+                    final newIsSearching = !isSearching;
+                    ref.read(timelineIsSearchingProvider(widget.rentalId).notifier).state = newIsSearching;
+                    if (!newIsSearching) {
+                      _searchController.clear();
+                      ref.read(timelineSearchQueryProvider(widget.rentalId).notifier).state = '';
+                    }
+                  },
+                  tooltip: 'Search Timeline',
+                ),
                 IconButton(
                   icon: const Icon(Icons.verified_user),
                   onPressed: () => _verifyIntegrity(context, ref),
@@ -97,7 +167,7 @@ class TimelineScreen extends ConsumerWidget {
               data: (events) {
                 if (events.isEmpty) {
                   return SliverFillRemaining(
-                    child: _buildEmptyState(context),
+                    child: _buildEmptyState(context, isSearching),
                   );
                 }
                 return SliverPadding(
@@ -108,7 +178,7 @@ class TimelineScreen extends ConsumerWidget {
                         final event = events[index];
                         final isFirst = index == 0;
                         final isLast = index == events.length - 1;
-                        
+
                         return _EventCard(
                           event: event,
                           isFirst: isFirst,
@@ -133,46 +203,51 @@ class TimelineScreen extends ConsumerWidget {
         error: (error, stack) => Center(child: Text('Error: $error')),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/rentals/$rentalId/add-event'),
+        onPressed: () => context.push('/rentals/${widget.rentalId}/add-event'),
         icon: const Icon(Icons.add),
         label: const Text('Add Event'),
       ),
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, bool isSearching) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.timeline,
+            isSearching ? Icons.search_off : Icons.timeline,
             size: 100,
             color: Colors.grey[300],
           ),
           const SizedBox(height: 24),
           Text(
-            'No Events Yet',
+            isSearching ? 'No Results Found' : 'No Events Yet',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   color: Colors.grey[600],
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Start documenting rental events',
+            isSearching
+                ? 'Try a different search term or check OCR processing status'
+                : 'Start documenting rental events',
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.grey[500],
                 ),
           ),
-          const SizedBox(height: 32),
-          ElevatedButton.icon(
-            onPressed: () => context.push('/rentals/$rentalId/add-event'),
-            icon: const Icon(Icons.add),
-            label: const Text('Add First Event'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          if (!isSearching) ...[
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () => context.push('/rentals/${widget.rentalId}/add-event'),
+              icon: const Icon(Icons.add),
+              label: const Text('Add First Event'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -196,10 +271,10 @@ class TimelineScreen extends ConsumerWidget {
 
     try {
       final repository = ref.read(rentalRepositoryProvider);
-      final result = await repository.verifyRentalIntegrity(rentalId);
-      
+      final result = await repository.verifyRentalIntegrity(widget.rentalId);
+
       Navigator.pop(context);
-      
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -246,7 +321,7 @@ class TimelineScreen extends ConsumerWidget {
               title: const Text('Export Evidence'),
               onTap: () {
                 Navigator.pop(context);
-                context.push('/rentals/$rentalId/export');
+                context.push('/rentals/${widget.rentalId}/export');
               },
             ),
             ListTile(
@@ -296,10 +371,10 @@ class TimelineScreen extends ConsumerWidget {
     if (confirmed == true) {
       try {
         final repository = ref.read(rentalRepositoryProvider);
-        await repository.closeRental(rentalId);
-        ref.invalidate(rentalProvider(rentalId));
+        await repository.closeRental(widget.rentalId);
+        ref.invalidate(rentalProvider(widget.rentalId));
         ref.invalidate(myRentalsProvider);
-        
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Rental closed successfully')),
@@ -330,7 +405,7 @@ class _EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('MMM dd, yyyy - HH:mm');
-    
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -544,7 +619,7 @@ class EvidenceThumbnail extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final urlAsync = ref.watch(mediaDownloadUrlProvider(mediaKey));
-    
+
     return urlAsync.when(
       data: (urlString) {
         // Simple logic: trust backend URL
@@ -556,8 +631,8 @@ class EvidenceThumbnail extends ConsumerWidget {
             height: 80,
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => Container(
-              width: 80, 
-              height: 80, 
+              width: 80,
+              height: 80,
               color: Colors.grey[200],
               child: const Icon(Icons.broken_image, size: 20, color: Colors.grey),
             ),
@@ -565,21 +640,21 @@ class EvidenceThumbnail extends ConsumerWidget {
         );
       },
       loading: () => Container(
-        width: 80, 
-        height: 80, 
-        color: Colors.grey[200], 
+        width: 80,
+        height: 80,
+        color: Colors.grey[200],
         child: const Center(
            child: SizedBox(
-             width: 20, 
-             height: 20, 
+             width: 20,
+             height: 20,
              child: CircularProgressIndicator(strokeWidth: 2),
            ),
         ),
       ),
       error: (_, __) => Container(
-        width: 80, 
-        height: 80, 
-        color: Colors.grey[200], 
+        width: 80,
+        height: 80,
+        color: Colors.grey[200],
         child: const Icon(Icons.error, size: 20, color: Colors.grey),
       ),
     );

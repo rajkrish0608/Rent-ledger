@@ -9,6 +9,10 @@ import { EventsModule } from './events/events.module';
 import { ExportsModule } from './exports/exports.module';
 import { MediaModule } from './media/media.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { OcrModule } from './ocr/ocr.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { BullModule } from '@nestjs/bullmq';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
     imports: [
@@ -30,6 +34,18 @@ import { DashboardModule } from './dashboard/dashboard.module';
         ExportsModule,
         MediaModule,
         DashboardModule,
+        OcrModule,
+        NotificationsModule,
+        BullModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
+                connection: {
+                    host: config.get('REDIS_HOST', 'localhost'),
+                    port: config.get('REDIS_PORT', 6379),
+                    password: config.get('REDIS_PASSWORD'),
+                },
+            }),
+        }),
     ],
     controllers: [],
     providers: [],

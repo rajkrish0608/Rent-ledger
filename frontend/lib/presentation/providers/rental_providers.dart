@@ -93,3 +93,23 @@ class RentalCreationNotifier extends StateNotifier<AsyncValue<Rental?>> {
 final rentalCreationProvider = StateNotifierProvider<RentalCreationNotifier, AsyncValue<Rental?>>(
   (ref) => RentalCreationNotifier(ref.watch(rentalRepositoryProvider)),
 );
+
+// Provider for search query on a timeline
+final timelineSearchQueryProvider = StateProvider.family<String, String>((ref, rentalId) => '');
+
+// Provider to track if searching is active
+final timelineIsSearchingProvider = StateProvider.family<bool, String>((ref, rentalId) => false);
+
+// Provider for filtered/searched events
+final timelineSearchResultProvider = FutureProvider.family<List<RentalEvent>, String>((ref, rentalId) async {
+  final query = ref.watch(timelineSearchQueryProvider(rentalId));
+  final repository = ref.watch(rentalRepositoryProvider);
+  
+  if (query.isEmpty) {
+    // If no query, return the default events (wait for the family provider)
+    return ref.watch(rentalEventsProvider(rentalId).future);
+  }
+  
+  // Call the search API
+  return repository.searchTimeline(rentalId, query);
+});

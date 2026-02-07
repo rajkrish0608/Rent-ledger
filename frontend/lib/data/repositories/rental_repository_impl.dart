@@ -130,4 +130,20 @@ class RentalRepositoryImpl implements RentalRepository {
       throw Exception('Failed to get event: $e');
     }
   }
+
+  @override
+  Future<List<RentalEvent>> searchTimeline(String id, String query) async {
+    try {
+      final response = await dio.get(
+        ApiConstants.searchRental(id),
+        queryParameters: {'q': query},
+      );
+      final List<dynamic> events = response.data;
+      return events
+          .map((json) => RentalEventModel.fromJson(json).toEntity())
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to search timeline: $e');
+    }
+  }
 }

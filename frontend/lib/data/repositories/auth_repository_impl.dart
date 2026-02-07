@@ -74,4 +74,9 @@ class AuthRepositoryImpl implements AuthRepository {
     final userData = jsonDecode(userDataString);
     return UserModel.fromJson(userData);
   }
+
+  @override
+  Future<void> updateFcmToken(String token) async {
+    await remoteDataSource.updateFcmToken(token);
+  }
 }

@@ -41,4 +41,7 @@ export class User {
     @ManyToOne(() => Society, (society) => society.admins, { nullable: true })
     @JoinColumn({ name: 'society_id' })
     society: Society;
+
+    @Column({ nullable: true })
+    fcm_token: string;
 }

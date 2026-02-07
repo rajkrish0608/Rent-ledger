@@ -5,6 +5,7 @@ import { Rental } from './entities/rental.entity';
 import { RentalParticipant } from './entities/rental-participant.entity';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { RentalResponseDto, ParticipantResponseDto } from './dto/rental-response.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class RentalsService {
@@ -13,6 +14,7 @@ export class RentalsService {
         private rentalsRepo: Repository<Rental>,
         @InjectRepository(RentalParticipant)
         private participantsRepo: Repository<RentalParticipant>,
+        private notificationsService: NotificationsService,
     ) { }
 
     /**
@@ -139,6 +141,14 @@ export class RentalsService {
         });
 
         await this.participantsRepo.save(participant);
+
+        // Notify user about the invite
+        // (We might want to skip this for the creator who is added automatically as BRK)
+        try {
+            await this.notificationsService.notifyRentalInvite(rentalId, userId);
+        } catch (e) {
+            console.error('Failed to queue invite notification', e);
+        }
     }
 
     /**

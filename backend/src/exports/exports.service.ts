@@ -8,6 +8,8 @@ import { Export } from './entities/export.entity';
 import { RentalsService } from '../rentals/rentals.service';
 import { IntegrityService } from '../integrity/integrity.service';
 import { CreateExportDto } from './dto/create-export.dto';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class ExportsService implements OnModuleInit {
@@ -19,6 +21,8 @@ export class ExportsService implements OnModuleInit {
         private exportsRepo: Repository<Export>,
         private rentalsService: RentalsService,
         private integrityService: IntegrityService,
+        @InjectQueue('pdf-exports')
+        private pdfQueue: Queue,
     ) { }
 
     async onModuleInit() {
@@ -81,14 +85,20 @@ export class ExportsService implements OnModuleInit {
 
         await this.exportsRepo.save(exportRecord);
 
-        // 3. Start processing asynchronously (fire and forget)
-        this.processExport(exportRecord.id, createDto.rental_id, userId).catch(err => {
-            console.error(`Export processing failed for ${exportRecord.id}`, err);
-            this.exportsRepo.update(exportRecord.id, {
-                status: 'FAILED',
-                error_message: err.message,
+        // 3. Queue for background processing
+        try {
+            await this.pdfQueue.add('generate-pdf', {
+                exportId: exportRecord.id,
+                rentalId: createDto.rental_id,
+                userId: userId,
             });
-        });
+        } catch (err) {
+            console.error(`Failed to queue export job for ${exportRecord.id}`, err);
+            await this.exportsRepo.update(exportRecord.id, {
+                status: 'FAILED',
+                error_message: 'Failed to queue export processing',
+            });
+        }
 
         return exportRecord;
     }
@@ -129,7 +139,7 @@ export class ExportsService implements OnModuleInit {
     /**
      * Process the export (Generate PDF -> Upload -> Update Record)
      */
-    private async processExport(exportId: string, rentalId: string, userId: string) {
+    async processExport(exportId: string, rentalId: string, userId: string) {
         try {
             // Update status to PROCESSING
             await this.exportsRepo.update(exportId, { status: 'PROCESSING' });

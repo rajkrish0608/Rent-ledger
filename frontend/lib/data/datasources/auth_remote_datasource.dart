@@ -49,4 +49,11 @@ class AuthRemoteDataSource {
       data: {'refreshToken': refreshToken},
     );
   }
+
+  Future<void> updateFcmToken(String fcmToken) async {
+    await dio.patch(
+      ApiConstants.fcmToken,
+      data: {'fcmToken': fcmToken},
+    );
+  }
 }

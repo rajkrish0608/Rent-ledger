@@ -31,4 +31,6 @@ abstract class RentalRepository {
   });
 
   Future<RentalEvent> getEventById(String id);
+  
+  Future<List<RentalEvent>> searchTimeline(String id, String query);
 }

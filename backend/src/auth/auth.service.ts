@@ -146,4 +146,8 @@ export class AuthService {
         }
         return user;
     }
+
+    async updateFcmToken(userId: string, fcmToken: string): Promise<void> {
+        await this.usersRepository.update(userId, { fcm_token: fcmToken });
+    }
 }
