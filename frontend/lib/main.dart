@@ -9,6 +9,7 @@ import 'presentation/screens/auth/register_screen.dart';
 import 'presentation/screens/rentals/my_rentals_screen.dart';
 import 'presentation/screens/rentals/timeline_screen.dart';
 import 'presentation/screens/rentals/add_event_screen.dart';
+import 'presentation/screens/rentals/evidence_screen.dart';
 
 void main() {
   runApp(
@@ -34,10 +35,14 @@ class RentLedgerApp extends ConsumerWidget {
           return isLoggedIn ? '/rentals' : '/login';
         }
 
+        // Redirect /home to /rentals
+        if (state.matchedLocation == '/home') {
+          return '/rentals';
+        }
+
         // If not logged in and trying to access protected routes
         if (!isLoggedIn && 
-            (state.matchedLocation.startsWith('/rentals') || 
-             state.matchedLocation.startsWith('/home'))) {
+            (state.matchedLocation.startsWith('/rentals'))) {
           return '/login';
         }
 
@@ -57,6 +62,10 @@ class RentLedgerApp extends ConsumerWidget {
           builder: (context, state) => RegisterScreen(),
         ),
         GoRoute(
+          path: '/home',
+          redirect: (context, state) => '/rentals',
+        ),
+        GoRoute(
           path: '/rentals',
           builder: (context, state) => const MyRentalsScreen(),
         ),
@@ -72,6 +81,13 @@ class RentLedgerApp extends ConsumerWidget {
           builder: (context, state) {
             final id = state.pathParameters['id']!;
             return AddEventScreen(rentalId: id);
+          },
+        ),
+        GoRoute(
+          path: '/rentals/:id/export',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return EvidenceScreen(rentalId: id);
           },
         ),
       ],

@@ -69,8 +69,8 @@ export class RentalsService {
             id: rental.id,
             property_address: rental.property_address,
             property_unit: rental.property_unit,
-            start_date: rental.start_date.toISOString(),
-            end_date: rental.end_date?.toISOString(),
+            start_date: new Date(rental.start_date).toISOString(),
+            end_date: rental.end_date ? new Date(rental.end_date).toISOString() : undefined,
             status: rental.status,
             participants: participants.map((p) => ({
                 id: p.id,
@@ -78,11 +78,11 @@ export class RentalsService {
                 name: p.user.name,
                 email: p.user.email,
                 role: p.role,
-                joined_at: p.joined_at.toISOString(),
-                left_at: p.left_at?.toISOString(),
+                joined_at: new Date(p.joined_at).toISOString(),
+                left_at: p.left_at ? new Date(p.left_at).toISOString() : undefined,
             })),
-            created_at: rental.created_at.toISOString(),
-            updated_at: rental.updated_at.toISOString(),
+            created_at: new Date(rental.created_at).toISOString(),
+            updated_at: new Date(rental.updated_at).toISOString(),
         };
     }
 
@@ -108,8 +108,8 @@ export class RentalsService {
                 id: rental.id,
                 property_address: rental.property_address,
                 property_unit: rental.property_unit,
-                start_date: rental.start_date.toISOString(),
-                end_date: rental.end_date?.toISOString(),
+                start_date: new Date(rental.start_date).toISOString(),
+                end_date: rental.end_date ? new Date(rental.end_date).toISOString() : undefined,
                 status: rental.status,
                 participants: allParticipants.map((p) => ({
                     id: p.id,
@@ -117,11 +117,11 @@ export class RentalsService {
                     name: p.user.name,
                     email: p.user.email,
                     role: p.role,
-                    joined_at: p.joined_at.toISOString(),
-                    left_at: p.left_at?.toISOString(),
+                    joined_at: new Date(p.joined_at).toISOString(),
+                    left_at: p.left_at ? new Date(p.left_at).toISOString() : undefined,
                 })),
-                created_at: rental.created_at.toISOString(),
-                updated_at: rental.updated_at.toISOString(),
+                created_at: new Date(rental.created_at).toISOString(),
+                updated_at: new Date(rental.updated_at).toISOString(),
             });
         }
 

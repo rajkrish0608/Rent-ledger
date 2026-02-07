@@ -12,7 +12,7 @@ export const typeOrmConfig: DataSourceOptions = {
     username: process.env.DB_USERNAME || 'rentledger_admin',
     password: process.env.DB_PASSWORD || 'dev_password',
     database: process.env.DB_NAME || 'rentledger_dev',
-    entities: [User, RefreshToken],
+    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
     synchronize: false, // NEVER use in production
     logging: process.env.NODE_ENV === 'development',

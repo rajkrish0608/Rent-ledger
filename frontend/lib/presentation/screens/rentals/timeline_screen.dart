@@ -245,7 +245,7 @@ class TimelineScreen extends ConsumerWidget {
               title: const Text('Export Evidence'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Navigate to export screen
+                context.push('/rentals/$rentalId/export');
               },
             ),
             ListTile(

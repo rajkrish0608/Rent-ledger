@@ -37,7 +37,7 @@ export class IntegrityService {
     /**
      * Verify the integrity of the entire event chain for a rental
      */
-    async verifyEventChain(rentalId: string): Promise<{ valid: boolean; errors: string[] }> {
+    async verifyEventChain(rentalId: string): Promise<{ valid: boolean; errors: string[]; events: RentalEvent[] }> {
         const events = await this.eventsRepo.find({
             where: { rental: { id: rentalId } },
             order: { timestamp: 'ASC' },
@@ -77,6 +77,7 @@ export class IntegrityService {
         return {
             valid: errors.length === 0,
             errors,
+            events,
         };
     }
 

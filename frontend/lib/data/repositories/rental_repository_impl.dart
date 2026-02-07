@@ -11,7 +11,6 @@ class RentalRepositoryImpl implements RentalRepository {
 
   RentalRepositoryImpl(this.dio);
 
-  @Override
   Future<Rental> createRental({
     required String propertyAddress,
     String? propertyUnit,
@@ -36,7 +35,6 @@ class RentalRepositoryImpl implements RentalRepository {
     }
   }
 
-  @Override
   Future<Rental> getRentalById(String id) async {
     try {
       final response = await dio.get(ApiConstants.rentalById(id));
@@ -47,7 +45,6 @@ class RentalRepositoryImpl implements RentalRepository {
     }
   }
 
-  @Override
   Future<List<Rental>> getMyRentals() async {
     try {
       final response = await dio.get(ApiConstants.rentals);
@@ -58,7 +55,6 @@ class RentalRepositoryImpl implements RentalRepository {
     }
   }
 
-  @Override
   Future<Rental> closeRental(String id) async {
     try {
       final response = await dio.post('${ApiConstants.rentalById(id)}/close');
@@ -69,7 +65,6 @@ class RentalRepositoryImpl implements RentalRepository {
     }
   }
 
-  @Override
   Future<Map<String, dynamic>> verifyRentalIntegrity(String id) async {
     try {
       final response = await dio.get(ApiConstants.verifyRental(id));
@@ -79,7 +74,6 @@ class RentalRepositoryImpl implements RentalRepository {
     }
   }
 
-  @Override
   Future<RentalEvent> createEvent({
     required String rentalId,
     required EventType eventType,
@@ -104,7 +98,6 @@ class RentalRepositoryImpl implements RentalRepository {
     }
   }
 
-  @Override
   Future<List<RentalEvent>> getEventsByRental(
     String rentalId, {
     int page = 1,
@@ -128,7 +121,6 @@ class RentalRepositoryImpl implements RentalRepository {
     }
   }
 
-  @Override
   Future<RentalEvent> getEventById(String id) async {
     try {
       final response = await dio.get('${ApiConstants.events}/$id');

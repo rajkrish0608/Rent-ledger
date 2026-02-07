@@ -21,7 +21,7 @@ class ApiConstants {
   static String mediaDownload(String id) => '/media/$id/download';
   
   // Export Endpoints
-  static String exportRental(String id) => '/exports/rentals/$id';
+  static const String exports = '/exports';
   static String exportStatus(String id) => '/exports/$id';
   static String exportDownload(String id) => '/exports/$id/download';
 }

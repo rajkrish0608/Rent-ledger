@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Rental } from '../../rentals/entities/rental.entity';
-import { User } from '../../auth/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('exports')
 export class Export {
