@@ -4,7 +4,7 @@ import '../../domain/entities/rental_event.dart';
 import '../../domain/repositories/rental_repository.dart';
 import '../models/rental_model.dart';
 import '../models/rental_event_model.dart';
-import '../../core/constants/api_constants.dart';
+import '../../core/constants/app_constants.dart';
 
 class RentalRepositoryImpl implements RentalRepository {
   final Dio dio;
@@ -39,7 +39,7 @@ class RentalRepositoryImpl implements RentalRepository {
   @Override
   Future<Rental> getRentalById(String id) async {
     try {
-      final response = await dio.get('${ApiConstants.rentals}/$id');
+      final response = await dio.get(ApiConstants.rentalById(id));
       final model = RentalModel.fromJson(response.data);
       return model.toEntity();
     } catch (e) {
@@ -61,7 +61,7 @@ class RentalRepositoryImpl implements RentalRepository {
   @Override
   Future<Rental> closeRental(String id) async {
     try {
-      final response = await dio.post('${ApiConstants.rentals}/$id/close');
+      final response = await dio.post('${ApiConstants.rentalById(id)}/close');
       final model = RentalModel.fromJson(response.data);
       return model.toEntity();
     } catch (e) {
@@ -72,7 +72,7 @@ class RentalRepositoryImpl implements RentalRepository {
   @Override
   Future<Map<String, dynamic>> verifyRentalIntegrity(String id) async {
     try {
-      final response = await dio.get('${ApiConstants.rentals}/$id/verify');
+      final response = await dio.get(ApiConstants.verifyRental(id));
       return response.data;
     } catch (e) {
       throw Exception('Failed to verify rental integrity: $e');
@@ -112,7 +112,7 @@ class RentalRepositoryImpl implements RentalRepository {
   }) async {
     try {
       final response = await dio.get(
-        '${ApiConstants.events}/rental/$rentalId',
+        ApiConstants.rentalEvents(rentalId),
         queryParameters: {
           'page': page,
           'limit': limit,

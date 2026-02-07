@@ -11,6 +11,7 @@ class ApiConstants {
   // Rentals Endpoints
   static const String rentals = '/rentals';
   static String rentalById(String id) => '/rentals/$id';
+  static const String events = '/events';
   static String rentalEvents(String id) => '/rentals/$id/events';
   static String verifyRental(String id) => '/rentals/$id/verify';
   

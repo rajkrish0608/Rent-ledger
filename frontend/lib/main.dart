@@ -6,6 +6,9 @@ import 'core/constants/app_constants.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/auth/register_screen.dart';
+import 'presentation/screens/rentals/my_rentals_screen.dart';
+import 'presentation/screens/rentals/timeline_screen.dart';
+import 'presentation/screens/rentals/add_event_screen.dart';
 
 void main() {
   runApp(
@@ -28,11 +31,13 @@ class RentLedgerApp extends ConsumerWidget {
 
         // If on splash, check auth and redirect
         if (state.matchedLocation == '/splash') {
-          return isLoggedIn ? '/home' : '/login';
+          return isLoggedIn ? '/rentals' : '/login';
         }
 
         // If not logged in and trying to access protected routes
-        if (!isLoggedIn && state.matchedLocation.startsWith('/home')) {
+        if (!isLoggedIn && 
+            (state.matchedLocation.startsWith('/rentals') || 
+             state.matchedLocation.startsWith('/home'))) {
           return '/login';
         }
 
@@ -52,8 +57,22 @@ class RentLedgerApp extends ConsumerWidget {
           builder: (context, state) => RegisterScreen(),
         ),
         GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomeScreen(),
+          path: '/rentals',
+          builder: (context, state) => const MyRentalsScreen(),
+        ),
+        GoRoute(
+          path: '/rentals/:id',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return TimelineScreen(rentalId: id);
+          },
+        ),
+        GoRoute(
+          path: '/rentals/:id/add-event',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return AddEventScreen(rentalId: id);
+          },
         ),
       ],
     );
@@ -78,7 +97,7 @@ class SplashScreen extends ConsumerWidget {
       if (context.mounted) {
         final authState = ref.read(authProvider);
         final isLoggedIn = authState.value != null;
-        context.go(isLoggedIn ? '/home' : '/login');
+        context.go(isLoggedIn ? '/rentals' : '/login');
       }
     });
 
