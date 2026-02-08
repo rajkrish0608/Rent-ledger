@@ -18,6 +18,7 @@ const connectionOptions: DataSourceOptions = {
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
     synchronize: false,
+    migrationsRun: process.env.NODE_ENV === 'production',
     logging: true,
     // Supabase requires SSL, even for the pooler
     ssl: { rejectUnauthorized: false },
