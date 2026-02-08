@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "139996756291",
+    "project_id": "rentledger-prod",
+    "storage_bucket": "rentledger-prod.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139996756291:android:4fb8aaf4b2890f52a857f6",
+        "android_client_info": {
+          "package_name": "com.rentledger.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWw0XSKowgCu1DwmLKFmNxiBuiE8l33aQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

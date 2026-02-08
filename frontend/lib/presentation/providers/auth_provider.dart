@@ -7,6 +7,13 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
 
   AuthNotifier(this.ref) : super(const AsyncValue.loading()) {
     _loadUser();
+    
+    // Listen for force logout triggers from Dio interceptor
+    ref.listen(forceLogoutProvider, (previous, next) {
+      if (next == true) {
+        logout();
+      }
+    });
   }
 
   Future<void> _loadUser() async {

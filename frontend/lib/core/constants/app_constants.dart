@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 class AppConstants {
   static const String appName = 'RentLedger';
-  static const String appTagline = 'The System of Record for Rentals';
+  static const String appTagline = 'Because memory is not evidence.';
 
   static String get baseUrl {
     if (kIsWeb) {

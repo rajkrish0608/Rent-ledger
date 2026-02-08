@@ -15,7 +15,7 @@
 
 ---
 
-**RentLedger** is a high-fidelity, industrial-grade rental infrastructure platform designed to bridge the gap between landlords, tenants, society administrations, and legal systems. Built with the precision and foresight of **30+ years of professional software engineering experience**, it solves the "trust gap" in rental markets through cryptographic event-chaining and institutional-grade oversight features.
+**RentLedger** is a high-fidelity, industrial-grade rental infrastructure platform designed to bridge the gap between landlords, tenants, society administrations, and legal systems. Built with the precision and foresight of **30+ years of professional software engineering experience**, it follows a core philosophy: **"Because memory is not evidence."**
 
 ---
 

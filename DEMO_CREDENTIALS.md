@@ -20,7 +20,7 @@ Role: BROKER
 ### Test Account 2: Tenant User (Create as needed)
 ```
 Email: tenant@test.com
-Password: Test123!
+Password: password123
 Role: TENANT
 ```
 
@@ -34,7 +34,7 @@ Role: TENANT
 ### Test Account 3: Landlord User (Create as needed)
 ```
 Email: landlord@test.com
-Password: Test123!
+Password: password123
 Role: LANDLORD
 ```
 

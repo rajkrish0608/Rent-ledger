@@ -10,6 +10,9 @@ import '../../data/repositories/dashboard/dashboard_repository.dart';
 import '../../data/repositories/society/society_repository.dart';
 import '../../domain/entities/rental.dart';
 
+// Force logout provider to break circular dependency
+final forceLogoutProvider = StateProvider<bool>((ref) => false);
+
 // Dio provider with auth interceptor
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
@@ -57,10 +60,14 @@ final dioProvider = Provider<Dio>((ref) {
             final retryResponse = await dio.fetch(error.requestOptions);
             return handler.resolve(retryResponse);
           } catch (e) {
-            // Refresh failed, clear tokens
+            // Refresh failed, clear tokens and trigger force logout
             await storage.deleteAll();
+            ref.read(forceLogoutProvider.notifier).state = true;
             return handler.reject(error);
           }
+        } else {
+          // No refresh token, trigger force logout
+          ref.read(forceLogoutProvider.notifier).state = true;
         }
       }
       

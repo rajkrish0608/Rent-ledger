@@ -30,18 +30,29 @@ void main() async {
   );
 }
 
-class RentLedgerApp extends ConsumerWidget {
+class RentLedgerApp extends ConsumerStatefulWidget {
   const RentLedgerApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Initialize FCM Service
-      ref.read(fcmServiceProvider).initialize();
+  ConsumerState<RentLedgerApp> createState() => _RentLedgerAppState();
+}
 
+class _RentLedgerAppState extends ConsumerState<RentLedgerApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize FCM Service safely after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(fcmServiceProvider).initialize();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final router = GoRouter(
       initialLocation: '/splash',
       redirect: (context, state) {
-        final authState = ref.read(authProvider);
+        final authState = ref.watch(authProvider);
         final isLoggedIn = authState.value != null;
 
         // If on splash, check auth and redirect
@@ -55,8 +66,7 @@ class RentLedgerApp extends ConsumerWidget {
         }
 
         // If not logged in and trying to access protected routes
-        if (!isLoggedIn && 
-            (state.matchedLocation.startsWith('/rentals'))) {
+        if (!isLoggedIn && (state.matchedLocation.startsWith('/rentals'))) {
           return '/login';
         }
 
