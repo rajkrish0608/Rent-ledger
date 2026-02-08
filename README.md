@@ -114,8 +114,6 @@ Developed with a **Privacy-by-Design** approach:
 
 ## 👨‍💻 Author
 
-**Professional Senior Engineer**  
-*30+ Years of Full-Stack Architecture & Systems Engineering*
 
 "RentLedger represents the culmination of decades of experience in building secure, scalable, and beautifully designed software systems for institutional users."
 
