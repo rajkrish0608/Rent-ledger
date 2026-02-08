@@ -10,6 +10,7 @@
         "node_modules",
         "dist",
         "test",
-        "**/*spec.ts"
+        "**/*spec.ts",
+        "src/verify_roles_e2e.ts"
     ]
 }

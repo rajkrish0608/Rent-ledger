@@ -6,14 +6,18 @@ class AppConstants {
   static const String appTagline = 'Because memory is not evidence.';
 
   static String get baseUrl {
+    // Production URL (Render)
+    return 'https://rent-ledger-qigs.onrender.com/api';
+
+    /* Local Development Backups
     if (kIsWeb) {
       return 'http://localhost:3000/api';
     }
     if (Platform.isAndroid) {
       return 'http://10.0.2.2:3000/api';
     }
-    // iOS Simulator uses localhost
     return 'http://localhost:3000/api';
+    */
   }
 
   // Auth Endpoints
