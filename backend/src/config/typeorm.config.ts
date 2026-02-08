@@ -17,7 +17,7 @@ export const typeOrmConfig: DataSourceOptions = {
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
     synchronize: process.env.NODE_ENV !== 'production', // Disable auto-sync in prod
     logging: process.env.NODE_ENV === 'development',
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    ssl: (process.env.NODE_ENV === 'production' || process.env.DATABASE_URL) ? { rejectUnauthorized: false } : false,
 };
 
 const dataSource = new DataSource(typeOrmConfig);
