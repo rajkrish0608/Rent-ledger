@@ -15,9 +15,11 @@ export const typeOrmConfig: DataSourceOptions = {
     database: process.env.DATABASE_URL ? undefined : (process.env.DB_NAME || 'rentledger_dev'),
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-    synchronize: process.env.NODE_ENV !== 'production', // Disable auto-sync in prod
-    logging: true, // DEBUG: Force logging to diagnose Render crash
-    ssl: (process.env.NODE_ENV === 'production' || process.env.DATABASE_URL) ? { rejectUnauthorized: false } : false,
+    synchronize: false, // Security: Never sync in prod/remotely
+    logging: true, // Keep logging on for one more deploy to verify
+    ssl: (process.env.DATABASE_URL?.includes('supabase.') || process.env.NODE_ENV === 'production')
+        ? { rejectUnauthorized: false }
+        : false,
 };
 
 const dataSource = new DataSource(typeOrmConfig);
