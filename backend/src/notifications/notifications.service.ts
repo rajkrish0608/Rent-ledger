@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 import * as admin from 'firebase-admin';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,7 +11,8 @@ import { Queue } from 'bullmq';
 @Injectable()
 export class NotificationsService implements OnModuleInit {
     private readonly logger = new Logger(NotificationsService.name);
-    private isSendGridConfigured = false;
+    private resend: Resend;
+    private isResendConfigured = false;
     private isFcmConfigured = false;
 
     constructor(
@@ -23,13 +24,13 @@ export class NotificationsService implements OnModuleInit {
     ) { }
 
     onModuleInit() {
-        const apiKey = this.configService.get<string>('SENDGRID_API_KEY');
+        const apiKey = this.configService.get<string>('RESEND_API_KEY');
         if (apiKey) {
-            sgMail.setApiKey(apiKey);
-            this.isSendGridConfigured = true;
-            this.logger.log('SendGrid configured');
+            this.resend = new Resend(apiKey);
+            this.isResendConfigured = true;
+            this.logger.log('Resend configured');
         } else {
-            this.logger.warn('SENDGRID_API_KEY not found. Emails will be logged to console.');
+            this.logger.warn('RESEND_API_KEY not found. Emails will be logged to console.');
         }
 
         const fcmPath = this.configService.get<string>('FIREBASE_CONFIG_PATH');
@@ -66,22 +67,18 @@ export class NotificationsService implements OnModuleInit {
     }
 
     async sendEmail(to: string, subject: string, text: string, html?: string) {
-        if (this.isSendGridConfigured) {
-            const msg = {
-                to,
-                from: this.configService.get<string>('SENDGRID_FROM_EMAIL', 'noreply@rentledger.io'),
-                subject,
-                text,
-                html: html || text,
-            };
+        if (this.isResendConfigured) {
             try {
-                await sgMail.send(msg);
-                this.logger.log(`Email sent to ${to}: ${subject}`);
+                const data = await this.resend.emails.send({
+                    from: this.configService.get<string>('EMAIL_FROM', 'onboarding@resend.dev'),
+                    to,
+                    subject,
+                    text,
+                    html: html || text,
+                });
+                this.logger.log(`Email sent to ${to}: ${subject} (ID: ${data.data?.id})`);
             } catch (error) {
                 this.logger.error(`Error sending email to ${to}`, error);
-                if (error.response) {
-                    this.logger.error(error.response.body);
-                }
             }
         } else {
             this.logger.log(`[STUB] Sending email to ${to}: ${subject}\nContent: ${text}`);
