@@ -15,7 +15,7 @@ class AuthRemoteDataSource {
     required String role,
   }) async {
     final response = await dio.post(
-      ApiConstants.register,
+      AppConstants.register,
       data: {
         'email': email,
         'password': password,
@@ -33,7 +33,7 @@ class AuthRemoteDataSource {
     required String password,
   }) async {
     final response = await dio.post(
-      ApiConstants.login,
+      AppConstants.login,
       data: {
         'email': email,
         'password': password,
@@ -45,14 +45,14 @@ class AuthRemoteDataSource {
 
   Future<void> logout(String refreshToken) async {
     await dio.post(
-      ApiConstants.logout,
+      AppConstants.logout,
       data: {'refreshToken': refreshToken},
     );
   }
 
   Future<void> updateFcmToken(String fcmToken) async {
     await dio.patch(
-      ApiConstants.fcmToken,
+      AppConstants.fcmToken,
       data: {'fcmToken': fcmToken},
     );
   }

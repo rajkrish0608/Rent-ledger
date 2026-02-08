@@ -14,7 +14,7 @@ export const typeOrmConfig: DataSourceOptions = {
     database: process.env.DB_NAME || 'rentledger_dev',
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-    synchronize: false, // NEVER use in production
+    synchronize: true, // Auto-create tables for dev
     logging: process.env.NODE_ENV === 'development',
 };
 

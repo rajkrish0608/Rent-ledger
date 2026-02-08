@@ -19,7 +19,7 @@ class RentalRepositoryImpl implements RentalRepository {
   }) async {
     try {
       final response = await dio.post(
-        ApiConstants.rentals,
+        AppConstants.rentals,
         data: {
           'property_address': propertyAddress,
           'property_unit': propertyUnit,
@@ -37,7 +37,7 @@ class RentalRepositoryImpl implements RentalRepository {
 
   Future<Rental> getRentalById(String id) async {
     try {
-      final response = await dio.get(ApiConstants.rentalById(id));
+      final response = await dio.get(AppConstants.rentalById(id));
       final model = RentalModel.fromJson(response.data);
       return model.toEntity();
     } catch (e) {
@@ -47,7 +47,7 @@ class RentalRepositoryImpl implements RentalRepository {
 
   Future<List<Rental>> getMyRentals() async {
     try {
-      final response = await dio.get(ApiConstants.rentals);
+      final response = await dio.get(AppConstants.rentals);
       final List<dynamic> data = response.data;
       return data.map((json) => RentalModel.fromJson(json).toEntity()).toList();
     } catch (e) {
@@ -57,7 +57,7 @@ class RentalRepositoryImpl implements RentalRepository {
 
   Future<Rental> closeRental(String id) async {
     try {
-      final response = await dio.post('${ApiConstants.rentalById(id)}/close');
+      final response = await dio.post('${AppConstants.rentalById(id)}/close');
       final model = RentalModel.fromJson(response.data);
       return model.toEntity();
     } catch (e) {
@@ -67,7 +67,7 @@ class RentalRepositoryImpl implements RentalRepository {
 
   Future<Map<String, dynamic>> verifyRentalIntegrity(String id) async {
     try {
-      final response = await dio.get(ApiConstants.verifyRental(id));
+      final response = await dio.get(AppConstants.verifyRental(id));
       return response.data;
     } catch (e) {
       throw Exception('Failed to verify rental integrity: $e');
@@ -82,7 +82,7 @@ class RentalRepositoryImpl implements RentalRepository {
   }) async {
     try {
       final response = await dio.post(
-        ApiConstants.events,
+        AppConstants.events,
         data: {
           'rental_id': rentalId,
           'event_type': eventType.value,
@@ -105,7 +105,7 @@ class RentalRepositoryImpl implements RentalRepository {
   }) async {
     try {
       final response = await dio.get(
-        ApiConstants.rentalEvents(rentalId),
+        AppConstants.rentalEvents(rentalId),
         queryParameters: {
           'page': page,
           'limit': limit,
@@ -123,7 +123,7 @@ class RentalRepositoryImpl implements RentalRepository {
 
   Future<RentalEvent> getEventById(String id) async {
     try {
-      final response = await dio.get('${ApiConstants.events}/$id');
+      final response = await dio.get('${AppConstants.events}/$id');
       final model = RentalEventModel.fromJson(response.data);
       return model.toEntity();
     } catch (e) {
@@ -135,7 +135,7 @@ class RentalRepositoryImpl implements RentalRepository {
   Future<List<RentalEvent>> searchTimeline(String id, String query) async {
     try {
       final response = await dio.get(
-        ApiConstants.searchRental(id),
+        AppConstants.searchRental(id),
         queryParameters: {'q': query},
       );
       final List<dynamic> events = response.data;

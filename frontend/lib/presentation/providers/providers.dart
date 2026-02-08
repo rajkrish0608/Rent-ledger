@@ -14,7 +14,7 @@ import '../../domain/entities/rental.dart';
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: ApiConstants.baseUrl,
+      baseUrl: AppConstants.baseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {
@@ -45,7 +45,7 @@ final dioProvider = Provider<Dio>((ref) {
           try {
             // Try to refresh the token
             final response = await dio.post(
-              ApiConstants.refresh,
+              AppConstants.refresh,
               data: {'refresh_token': refreshToken},
             );
             

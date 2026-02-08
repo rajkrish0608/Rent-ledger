@@ -175,7 +175,7 @@ class _EvidenceScreenState extends ConsumerState<EvidenceScreen> {
       
       String finalUrl = urlString;
       if (urlString.startsWith('/')) {
-         finalUrl = ApiConstants.baseUrl.replaceAll('/api', '') + urlString;
+         finalUrl = AppConstants.baseUrl.replaceAll('/api', '') + urlString;
       }
       
       final uri = Uri.parse(finalUrl);

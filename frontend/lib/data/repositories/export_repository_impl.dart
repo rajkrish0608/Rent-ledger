@@ -12,7 +12,7 @@ class ExportRepositoryImpl implements ExportRepository {
   Future<Export> createExport(String rentalId) async {
     try {
       final response = await dio.post(
-        ApiConstants.exports,
+        AppConstants.exports,
         data: {'rental_id': rentalId, 'options': {'format': 'pdf'}},
       );
       return Export.fromJson(response.data);
@@ -24,7 +24,7 @@ class ExportRepositoryImpl implements ExportRepository {
   @override
   Future<Export> getExport(String exportId) async {
     try {
-      final response = await dio.get(ApiConstants.exportStatus(exportId));
+      final response = await dio.get(AppConstants.exportStatus(exportId));
       return Export.fromJson(response.data);
     } catch (e) {
       throw Exception('Failed to get export status: $e');
@@ -34,7 +34,7 @@ class ExportRepositoryImpl implements ExportRepository {
   @override
   Future<String> getDownloadUrl(String exportId) async {
     try {
-      final response = await dio.get(ApiConstants.exportDownload(exportId));
+      final response = await dio.get(AppConstants.exportDownload(exportId));
       return response.data['url'];
     } catch (e) {
       throw Exception('Failed to get download URL: $e');

@@ -483,6 +483,8 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         return Colors.redAccent;
       case EventType.inspection:
         return Colors.teal;
+      case EventType.disputeFlagged:
+        return Colors.red;
     }
   }
 
@@ -506,6 +508,8 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         return Icons.report_problem;
       case EventType.inspection:
         return Icons.search;
+      case EventType.disputeFlagged:
+        return Icons.flag;
     }
   }
 

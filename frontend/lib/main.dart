@@ -11,6 +11,7 @@ import 'presentation/screens/auth/register_screen.dart';
 import 'presentation/screens/rentals/my_rentals_screen.dart';
 import 'presentation/screens/rentals/timeline_screen.dart';
 import 'presentation/screens/rentals/add_event_screen.dart';
+import 'presentation/screens/rentals/add_rental_screen.dart';
 import 'presentation/screens/rentals/evidence_screen.dart';
 
 void main() async {
@@ -35,7 +36,7 @@ class RentLedgerApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Initialize FCM Service
-    ref.read(fcmServiceProvider).initialize();
+      ref.read(fcmServiceProvider).initialize();
 
     final router = GoRouter(
       initialLocation: '/splash',
@@ -81,6 +82,10 @@ class RentLedgerApp extends ConsumerWidget {
         GoRoute(
           path: '/rentals',
           builder: (context, state) => const MyRentalsScreen(),
+        ),
+        GoRoute(
+          path: '/rentals/create',
+          builder: (context, state) => const AddRentalScreen(),
         ),
         GoRoute(
           path: '/rentals/:id',

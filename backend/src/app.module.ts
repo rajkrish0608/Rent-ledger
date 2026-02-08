@@ -13,6 +13,7 @@ import { OcrModule } from './ocr/ocr.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { HealthModule } from './health/health.module';
 import { UsersModule } from './users/users.module';
+import { SocietyModule } from './society/society.module';
 import { LegalModule } from './legal/legal.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bullmq';
@@ -42,6 +43,7 @@ import { ConfigService } from '@nestjs/config';
         NotificationsModule,
         HealthModule,
         UsersModule,
+        SocietyModule,
         LegalModule,
         ThrottlerModule.forRoot([{
             ttl: 60000,
