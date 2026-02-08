@@ -2,6 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
+import * as dns from 'dns';
+
+// Fix for Render/Supabase IPv6 issues
+dns.setDefaultResultOrder('ipv4first');
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
