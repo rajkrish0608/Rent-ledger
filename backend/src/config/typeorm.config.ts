@@ -20,6 +20,9 @@ export const typeOrmConfig: DataSourceOptions = {
     ssl: (process.env.DATABASE_URL?.includes('supabase.') || process.env.NODE_ENV === 'production')
         ? { rejectUnauthorized: false }
         : false,
+    extra: {
+        family: 4, // Force IPv4 (node-postgres) to prevent ENETUNREACH on Render
+    }
 };
 
 const dataSource = new DataSource(typeOrmConfig);
