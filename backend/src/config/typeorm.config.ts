@@ -16,7 +16,7 @@ export const typeOrmConfig: DataSourceOptions = {
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
     synchronize: process.env.NODE_ENV !== 'production', // Disable auto-sync in prod
-    logging: process.env.NODE_ENV === 'development',
+    logging: true, // DEBUG: Force logging to diagnose Render crash
     ssl: (process.env.NODE_ENV === 'production' || process.env.DATABASE_URL) ? { rejectUnauthorized: false } : false,
 };
 
