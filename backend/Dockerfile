@@ -32,8 +32,10 @@ RUN npm ci --only=production && npm cache clean --force
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
 
-# Create a non-root user for security
-RUN addgroup -S rentledger && adduser -S rentledger -G rentledger
+# Create a non-root user for security and setup permissions for uploads
+RUN addgroup -S rentledger && adduser -S rentledger -G rentledger \
+    && mkdir -p /app/uploads/media \
+    && chown -R rentledger:rentledger /app/uploads
 USER rentledger
 
 EXPOSE 3000
